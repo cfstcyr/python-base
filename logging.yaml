@@ -1,0 +1,20 @@
+version: 1
+
+disable_existing_loggers: False
+
+handlers:
+  rich:
+    class: rich.logging.RichHandler
+
+loggers:
+  app:
+    level: DEBUG
+    handlers: [rich]
+
+  core:
+    level: DEBUG
+    handlers: [rich]
+
+  config:
+    level: DEBUG
+    handlers: [rich]

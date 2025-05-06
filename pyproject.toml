@@ -1,0 +1,32 @@
+[project]
+name = "python-base"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic>=2.11.4",
+    "pydantic-settings>=2.9.1",
+    "python-json-logger>=3.3.0",
+    "pyyaml>=6.0.2",
+]
+
+[dependency-groups]
+dev = [
+    "rich>=14.0.0",
+    "ruff>=0.11.8",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+app = "app.main:main"
+
+[tool.ruff]
+include = ["src/**/*.py", "tests/**/*.py"]
+
+[tool.ruff.lint]
+preview = true
+extend-select = ["I", "PERF", "PD"]
