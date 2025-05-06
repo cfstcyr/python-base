@@ -38,5 +38,6 @@ COPY \
     ./
 
 ENV LOG_CONFIG_PATH=/app/logging.prod.yaml
+ENV ENVIRONMENT=production
 
 CMD ["/app/.venv/bin/app"]
