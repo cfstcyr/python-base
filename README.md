@@ -1,5 +1,10 @@
 # Python base
 
+## Description
+
+This is a base repository for Python projects. It provides a set of tools and libraries to help you get started quickly.
+It is designed to follow the best practices and conventions of Python development.
+
 ## How to use
 
 This repository is a base for Python projects. It provides a set of tools and libraries to help you get started quickly.
