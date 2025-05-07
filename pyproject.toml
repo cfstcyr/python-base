@@ -12,6 +12,10 @@ dependencies = [
 ]
 
 [dependency-groups]
+api = [
+    "fastapi[standard]>=0.115.12",
+    "uvicorn>=0.34.2",
+]
 dev = [
     "pytest>=8.3.5",
     "rich>=14.0.0",
