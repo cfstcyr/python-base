@@ -114,6 +114,7 @@ uv sync --all-groups --all-extras
 
 ```bash
 pre-commit install
+pre-commit install -t commit-msg
 ```
 - Run pre-commit hooks manually:
 
