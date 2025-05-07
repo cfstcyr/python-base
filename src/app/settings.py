@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from core.settings import AppBaseSettings
+from lib_core.settings import AppBaseSettings
 
 
 class Settings(AppBaseSettings):

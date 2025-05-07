@@ -1,8 +1,8 @@
 import logging
 
 from app.settings import get_settings
-from core.foo import bar
-from core.logs import init_logs
+from lib_core.foo import bar
+from lib_core.logs import init_logs
 
 logger = logging.getLogger(__name__)
 

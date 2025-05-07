@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 
 from app.settings import Settings
-from core.logs.logs_settings import LogsSettings
-from core.settings.app_base_settings import Environment
+from lib_core.logs.logs_settings import LogsSettings
+from lib_core.settings.app_base_settings import Environment
 
 
 @pytest.fixture()

@@ -3,7 +3,7 @@ from enum import Enum
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from core.logs.logs_settings import LogsSettings
+from lib_core.logs.logs_settings import LogsSettings
 
 
 class Environment(Enum):

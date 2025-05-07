@@ -1,4 +1,4 @@
-from core.foo import bar
+from lib_core.foo import bar
 
 
 def test_bar():

@@ -6,8 +6,10 @@ A starter repository for Python projects, following best practices and conventio
 
 ## Project Structure
 
+Modules in the `src` directory are organized into two main categories:
+
 - **Applications**: Main entry points (e.g., CLI, API). Executed directly.
-- **Libraries**: Reusable components. Imported by applications, not executed directly.
+- **Libraries**: Reusable components. Imported by applications, not executed directly. (e.g., `src/lib_core`)
 
 ## Features
 
@@ -42,7 +44,7 @@ Settings are managed with [pydantic-settings](https://pydantic-docs.helpmanual.i
 
 ```python
 from functools import lru_cache
-from core.settings import AppBaseSettings
+from lib_core.settings import AppBaseSettings
 
 class Settings(AppBaseSettings):
     pass
@@ -58,8 +60,8 @@ def get_settings() -> Settings:
 **Example:**
 
 ```python
-from core.settings import AppBaseSettings
-from core.genai import GenAISettings
+from lib_core.settings import AppBaseSettings
+from lib_genai import GenAISettings
 
 class Settings(AppBaseSettings):
     genai: GenAISettings = GenAISettings()
@@ -81,14 +83,14 @@ def main(*, settings: Settings = get_settings()) -> None:
 
 ```python
 # In the library
-from core.bigquery import BigQueryTableSettings
+from lib_bigquery import BigQueryTableSettings
 
 def count_rows(bigquery_table: BigQueryTableSettings) -> int:
     ...
     
 # In the application
-from core.settings import AppBaseSettings
-from core.bigquery import BigQueryTableSettings
+from lib_core.settings import AppBaseSettings
+from lib_bigquery import BigQueryTableSettings
 
 class Settings(AppBaseSettings):
     input_bigquery: BigQueryTableSettings = BigQueryTableSettings()
