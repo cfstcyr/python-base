@@ -10,10 +10,12 @@ class Environment(Enum):
     """
     Enum for different environments.
     """
+
     DEVELOPMENT = "development"
     PRODUCTION = "production"
     TESTING = "testing"
     STAGING = "staging"
+
 
 class AppBaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -35,7 +37,7 @@ class AppBaseSettings(BaseSettings):
         Check if the current environment is development.
         """
         return self.env == Environment.DEVELOPMENT
-    
+
     def is_prod(self) -> bool:
         """
         Check if the current environment is production.

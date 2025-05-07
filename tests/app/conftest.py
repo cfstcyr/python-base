@@ -1,0 +1,17 @@
+from pathlib import Path
+
+import pytest
+
+from app.settings import Settings
+from core.logs.logs_settings import LogsSettings
+from core.settings.app_base_settings import Environment
+
+
+@pytest.fixture()
+def settings():
+    yield Settings(
+        env=Environment.TESTING,
+        logs=LogsSettings(
+            log_config_path=Path("logging.test.yaml"),
+        ),
+    )

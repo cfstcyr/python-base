@@ -6,6 +6,7 @@ from core.settings import AppBaseSettings
 class Settings(AppBaseSettings):
     pass
 
+
 @lru_cache()
 def get_settings() -> Settings:
     """

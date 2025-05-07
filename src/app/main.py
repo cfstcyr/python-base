@@ -6,8 +6,8 @@ from core.logs import init_logs
 
 logger = logging.getLogger(__name__)
 
-def main():
-    settings = get_settings()
+
+def main(*, settings=get_settings()):
     init_logs(settings.logs)
 
     logger.info("Starting application...")
