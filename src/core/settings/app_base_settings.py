@@ -1,8 +1,9 @@
 from enum import Enum
-from pathlib import Path
 
-from pydantic import AliasChoices, Field, FilePath
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from core.logs.logs_settings import LogsSettings
 
 
 class Environment(Enum):
@@ -21,14 +22,7 @@ class AppBaseSettings(BaseSettings):
         env_nested_delimiter="__",
     )
 
-    log_config_path: FilePath = Field(
-        default=Path("logging.yaml"),
-        validation_alias=AliasChoices("log_config", "log_config_path"),
-        description=(
-            "Path to the logging configuration file. "
-            "The file should follow the [logging configuration dictionary schema](https://docs.python.org/3/library/logging.config.html#logging-config-dictschema)"
-        ),
-    )
+    logs: LogsSettings = LogsSettings()
 
     env: Environment = Field(
         default=Environment.DEVELOPMENT,
