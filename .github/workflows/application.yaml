@@ -1,0 +1,39 @@
+name: Application
+
+on:
+  workflow_dispatch:
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Project
+        uses: ./.github/actions/setup-project
+      - name: Lint
+        run: make lint
+      - name: Format
+        run: make format
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Project
+        uses: ./.github/actions/setup-project
+      - name: Test
+        run: make test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          # push: true
+          tags: app:latest,app:0.0.1
+          target: app

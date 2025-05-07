@@ -1,0 +1,49 @@
+name: Setup Python Project Environment
+description: |
+  Sets up a Python environment using uv package manager, installs Python with the version
+  specified in pyproject.toml, and installs project dependencies. Optionally includes
+  development dependencies for testing and development workflows.
+
+inputs:
+  groups:
+    description: |
+      A comma-separated list of groups to install. The default is "dev".
+      This input is optional and can be used to specify different groups
+      of dependencies to install.
+    required: false
+    default: "dev"
+  python-version:
+    description: 'Python version to install (use "auto" to read from pyproject.toml)'
+    required: false
+    default: 'auto'
+
+runs:
+  using: composite
+  steps:
+    - name: Install uv package manager
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
+    - name: Set up Python runtime (explicit version)
+      uses: actions/setup-python@v5
+      if: ${{ inputs.python-version != 'auto' }}
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Set up Python runtime (auto version)
+      uses: actions/setup-python@v5
+      if: ${{ inputs.python-version == 'auto' }}
+      with:
+        python-version-file: pyproject.toml
+
+    - name: Install dependencies
+      run: |
+        GRPS_STR=""
+        IFS=',' read -ra elements <<< "${{ inputs.groups }}"
+        for element in "${elements[@]}"; do
+            GRPS_STR+="--group $element "
+        done
+
+        uv sync $GRPS_STR
+      shell: bash
