@@ -6,6 +6,15 @@ handlers:
   rich:
     class: rich.logging.RichHandler
 
-root:
-  level: DEBUG
-  handlers: [rich]
+loggers:
+  app:
+    level: DEBUG
+    handlers: [rich]
+
+  api:
+    level: DEBUG
+    handlers: [rich]
+
+  lib_core:
+    level: DEBUG
+    handlers: [rich]
