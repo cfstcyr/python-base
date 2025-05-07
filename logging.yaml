@@ -14,7 +14,3 @@ loggers:
   core:
     level: DEBUG
     handlers: [rich]
-
-  config:
-    level: DEBUG
-    handlers: [rich]

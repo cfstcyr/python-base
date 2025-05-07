@@ -14,7 +14,7 @@ class Environment(Enum):
     TESTING = "testing"
     STAGING = "staging"
 
-class Settings(BaseSettings):
+class AppBaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
