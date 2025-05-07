@@ -12,6 +12,6 @@ def settings():
     yield Settings(
         env=Environment.TESTING,
         logs=LogsSettings(
-            log_config_path=Path("logging.test.yaml"),
+            logs_config_path=Path("logging.test.yaml"),
         ),
     )

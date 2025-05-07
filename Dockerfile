@@ -37,7 +37,7 @@ COPY \
     logging.prod.yaml \
     ./
 
-ENV LOG_CONFIG_PATH=/app/logging.prod.yaml
+ENV LOGS_CONFIG_PATH=/app/logging.prod.yaml
 ENV ENVIRONMENT=production
 
 

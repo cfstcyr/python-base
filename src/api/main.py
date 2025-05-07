@@ -12,6 +12,7 @@ app = FastAPI()
 
 logger.info("Starting FastAPI application")
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
