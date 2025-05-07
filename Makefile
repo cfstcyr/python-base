@@ -5,6 +5,10 @@ EXECUTOR := uv run
 test:
 	$(EXECUTOR) pytest
 
+pc: pre-commit
+pre-commit:
+	$(EXECUTOR) pre-commit run --all-files
+
 lint:
 	$(EXECUTOR) ruff check
 

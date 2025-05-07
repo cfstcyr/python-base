@@ -87,7 +87,7 @@ from lib_bigquery import BigQueryTableSettings
 
 def count_rows(bigquery_table: BigQueryTableSettings) -> int:
     ...
-    
+
 # In the application
 from lib_core.settings import AppBaseSettings
 from lib_bigquery import BigQueryTableSettings
@@ -106,6 +106,20 @@ def main(*, settings: Settings = get_settings()) -> None:
 
 ```bash
 uv sync --all-groups --all-extras
+```
+
+#### Pre-commit Hooks
+
+- Install pre-commit hooks:
+
+```bash
+pre-commit install
+```
+- Run pre-commit hooks manually:
+
+```bash
+make pre-commit # or, the alias
+make pc
 ```
 
 ### Running the Application

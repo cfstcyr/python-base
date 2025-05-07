@@ -15,7 +15,7 @@ jobs:
         run: make lint
       - name: Format
         run: make format
-  
+
   test:
     runs-on: ubuntu-latest
     steps:

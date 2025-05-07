@@ -32,7 +32,7 @@ site/
 .vscode/
 .idea/
 *.swp
-*~ 
+*~
 
 # ========================
 # Testing / tooling

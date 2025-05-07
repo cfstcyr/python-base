@@ -12,4 +12,4 @@ def main(*, settings=get_settings()):
 
     logger.info("Starting application...")
 
-    print(bar())
+    bar()

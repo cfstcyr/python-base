@@ -17,6 +17,7 @@ api = [
     "uvicorn>=0.34.2",
 ]
 dev = [
+    "pre-commit>=4.2.0",
     "pytest>=8.3.5",
     "rich>=14.0.0",
     "ruff>=0.11.8",
@@ -37,7 +38,13 @@ include = ["src/**/*.py", "tests/**/*.py"]
 
 [tool.ruff.lint]
 preview = true
-extend-select = ["I", "PERF", "PD"]
+extend-select = ["I", "PERF", "PD", "S", "FBT", "A", "COM", "DTZ", "ISC", "LOG", "G", "PIE", "T20", "PT", "RET", "SIM", "TID", "PTH"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"src".msg = "Do not use src imports. Imports are relative to the src directory and should not include the 'src.' prefix."
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
