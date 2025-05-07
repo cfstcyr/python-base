@@ -43,7 +43,7 @@ ENV ENVIRONMENT=production
 
 # ======= Build the application image ========
 FROM base AS app
-CMD ["/app/.venv/bin/app"]
+ENTRYPOINT ["/app/.venv/bin/app"]
 
 
 # ======= Build the API image ========
