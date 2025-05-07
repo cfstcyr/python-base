@@ -1,3 +1,5 @@
+# source: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
+
 ARG PYTHON_VERSION=3.13
 
 
@@ -14,11 +16,17 @@ ENV UV_LINK_MODE=copy
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project --no-editable --no-dev --group api  --compile-bytecode
+    uv sync --frozen --no-install-project --no-editable --no-dev  --compile-bytecode
+
+COPY . .
+
+# Install project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-editable --no-dev --compile-bytecode
 
 
-# ======== Build the application image ========
-FROM python:${PYTHON_VERSION}-slim
+# ======== Build the base image ========
+FROM python:${PYTHON_VERSION}-slim AS base
 
 WORKDIR /app
 
@@ -27,12 +35,18 @@ COPY --from=builder --chown=app:app \
 
 COPY \
     logging.prod.yaml \
-    pyproject.toml \
-    src/ \
     ./
 
 ENV LOG_CONFIG_PATH=/app/logging.prod.yaml
 ENV ENVIRONMENT=production
 
-ENTRYPOINT ["/app/.venv/bin/uvicorn", "api.main:app"]
+
+# ======= Build the application image ========
+FROM base AS app
+CMD ["/app/.venv/bin/app"]
+
+
+# ======= Build the API image ========
+FROM base AS api
+ENTRYPOINT ["/app/.venv/bin/uvicorn", "api:app"]
 CMD ["--host", "0.0.0.0", "--port", "8000"]

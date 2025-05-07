@@ -29,6 +29,9 @@ build-backend = "setuptools.build_meta"
 [project.scripts]
 app = "app.main:main"
 
+[tool.uv]
+default-groups = ["api"]
+
 [tool.ruff]
 include = ["src/**/*.py", "tests/**/*.py"]
 
