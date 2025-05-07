@@ -1,17 +1,20 @@
-EXECUTOR := uv run python
+EXECUTOR := uv run
 
 .PHONY: all
 
+test:
+	$(EXECUTOR) pytest
+
 lint:
-	$(EXECUTOR) -m ruff check
+	$(EXECUTOR) ruff check
 
 format:
-	$(EXECUTOR) -m ruff format --check
+	$(EXECUTOR) ruff format --check
 
 lx: lint-fix
 lint-fix:
-	$(EXECUTOR) -m ruff check --fix
+	$(EXECUTOR) ruff check --fix
 
 fx: format-fix
 format-fix:
-	$(EXECUTOR) -m ruff format
+	$(EXECUTOR) ruff format
