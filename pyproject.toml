@@ -19,6 +19,7 @@ api = [
 dev = [
     "pre-commit>=4.2.0",
     "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
     "rich>=14.0.0",
     "ruff>=0.11.8",
 ]
@@ -48,6 +49,7 @@ extend-select = ["I", "PERF", "PD", "S", "FBT", "A", "COM", "DTZ", "ISC", "LOG",
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--cov=src --cov-fail-under=60"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
