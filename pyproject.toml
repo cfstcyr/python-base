@@ -49,6 +49,9 @@ ignore = ["COM812"]
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "src".msg = "Do not use src imports. Imports are relative to the src directory and should not include the 'src.' prefix."
 
+[tool.ruff.format]
+docstring-code-format = true
+
 [tool.pyright]
 include = ["src/**/*.py"]
 exclude = ["tests"]

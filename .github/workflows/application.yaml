@@ -14,7 +14,7 @@ jobs:
       - name: Type Check
         run: make types
       - name: Lint
-        run: make lint
+        run: make lint ARGS="--output-format=github"
       - name: Format
         run: make format
 

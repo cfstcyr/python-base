@@ -3,25 +3,25 @@ EXECUTOR := uv run
 .PHONY: all
 
 test:
-	$(EXECUTOR) pytest
+	$(EXECUTOR) pytest $(ARGS)
 
 types:
-	$(EXECUTOR) pyright
+	$(EXECUTOR) pyright $(ARGS)
 
 pc: pre-commit
 pre-commit:
-	$(EXECUTOR) pre-commit run --all-files
+	$(EXECUTOR) pre-commit run --all-files $(ARGS)
 
 lint:
-	$(EXECUTOR) ruff check
+	$(EXECUTOR) ruff check $(ARGS)
 
 format:
-	$(EXECUTOR) ruff format --check
+	$(EXECUTOR) ruff format --check $(ARGS)
 
 lx: lint-fix
 lint-fix:
-	$(EXECUTOR) ruff check --fix
+	$(EXECUTOR) ruff check --fix $(ARGS)
 
 fx: format-fix
 format-fix:
-	$(EXECUTOR) ruff format
+	$(EXECUTOR) ruff format $(ARGS)
