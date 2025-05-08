@@ -40,7 +40,7 @@ include = ["src/**/*.py", "tests/**/*.py"]
 
 [tool.ruff.lint]
 preview = true
-extend-select = ["I", "PERF", "PD", "S", "FBT", "A", "COM", "DTZ", "ISC", "LOG", "G", "PIE", "T20", "PT", "RET", "SIM", "TID", "PTH", "UP", "DOC"]
+extend-select = ["I", "PERF", "E", "W", "PD", "NPY", "S", "FBT", "A", "COM", "DTZ", "ISC", "LOG", "G", "PIE", "T20", "PT", "RET", "SIM", "TID", "PTH", "UP", "DOC"]
 ignore = ["COM812"]
 
 [tool.ruff.lint.per-file-ignores]
