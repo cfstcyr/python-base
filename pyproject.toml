@@ -18,6 +18,7 @@ api = [
 ]
 dev = [
     "pre-commit>=4.2.0",
+    "pyright>=1.1.400",
     "pytest>=8.3.5",
     "pytest-cov>=6.1.1",
     "rich>=14.0.0",
@@ -46,6 +47,14 @@ extend-select = ["I", "PERF", "PD", "S", "FBT", "A", "COM", "DTZ", "ISC", "LOG",
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "src".msg = "Do not use src imports. Imports are relative to the src directory and should not include the 'src.' prefix."
+
+[tool.pyright]
+include = ["src/**/*.py"]
+exclude = ["tests"]
+typeCheckingMode = "strict"
+reportMissingParameterType = true
+reportMissingTypeArgument = true
+reportMissingTypeAnnotation = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -5,6 +5,9 @@ EXECUTOR := uv run
 test:
 	$(EXECUTOR) pytest
 
+types:
+	$(EXECUTOR) pyright
+
 pc: pre-commit
 pre-commit:
 	$(EXECUTOR) pre-commit run --all-files
