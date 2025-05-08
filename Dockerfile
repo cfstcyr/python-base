@@ -29,6 +29,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:${PYTHON_VERSION}-slim AS base
 
 WORKDIR /app
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup --uid 1000 appuser
 
 COPY --from=builder --chown=app:app \
     /app/.venv /app/.venv
@@ -39,6 +40,9 @@ COPY \
 
 ENV LOGS_CONFIG_PATH=/app/logging.prod.yaml
 ENV ENVIRONMENT=production
+
+RUN chown -R appuser:appgroup /app
+USER appuser
 
 
 # ======= Build the application image ========
