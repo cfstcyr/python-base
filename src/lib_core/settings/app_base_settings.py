@@ -36,11 +36,17 @@ class AppBaseSettings(BaseSettings):
     def is_dev(self) -> bool:
         """
         Check if the current environment is development.
+
+        Returns:
+            bool: True if the environment is development, False otherwise.
         """
         return self.env == Environment.DEVELOPMENT
 
     def is_prod(self) -> bool:
         """
         Check if the current environment is production.
+
+        Returns:
+            bool: True if the environment is production, False otherwise.
         """
         return self.env == Environment.PRODUCTION
