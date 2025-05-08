@@ -64,7 +64,7 @@ from lib_core.settings import AppBaseSettings
 from lib_genai import GenAISettings
 
 class Settings(AppBaseSettings):
-    genai: GenAISettings = GenAISettings()
+    genai: GenAISettings
 ```
 
 **Using Settings:**
@@ -93,8 +93,8 @@ from lib_core.settings import AppBaseSettings
 from lib_bigquery import BigQueryTableSettings
 
 class Settings(AppBaseSettings):
-    input_bigquery: BigQueryTableSettings = BigQueryTableSettings()
-    output_bigquery: BigQueryTableSettings = BigQueryTableSettings()
+    input_bigquery: BigQueryTableSettings
+    output_bigquery: BigQueryTableSettings
 
 def main(*, settings: Settings = get_settings()) -> None:
    output_row_count = count_rows(bigquery_table=settings.output_bigquery)
