@@ -12,6 +12,6 @@ def settings():
     return Settings(
         env=Environment.TESTING,
         logs=LogsSettings(
-            logs_config_path=Path("logging.test.yaml"),
+            logs_config_path=Path("conf/logging.test.yaml"),
         ),
     )

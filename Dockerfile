@@ -34,11 +34,9 @@ RUN addgroup --system appgroup && adduser --system --ingroup appgroup --uid 1000
 COPY --from=builder --chown=app:app \
     /app/.venv /app/.venv
 
-COPY \
-    logging.prod.yaml \
-    ./
+COPY ./conf/ /app/conf/
 
-ENV LOGS_CONFIG_PATH=/app/logging.prod.yaml
+ENV LOGS_CONFIG_PATH=/app/conf/logging.prod.yaml
 ENV ENVIRONMENT=production
 
 RUN chown -R appuser:appgroup /app
