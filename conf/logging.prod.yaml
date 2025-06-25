@@ -14,6 +14,12 @@ handlers:
     stream: ext://sys.stdout
     formatter: json
 
+  uvicorn:
+    class: logging.StreamHandler
+    level: INFO
+    stream: ext://sys.stdout
+    formatter: json
+
 root:
   level: INFO
   handlers: [console]

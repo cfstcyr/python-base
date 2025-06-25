@@ -1,4 +1,6 @@
 EXECUTOR := uv run
+DOCKER_IMAGE := pythonbase
+DOCKER_TARGET := app
 
 .PHONY: all
 
@@ -25,3 +27,9 @@ lint-fix:
 fx: format-fix
 format-fix:
 	$(EXECUTOR) ruff format $(ARGS)
+
+build:
+	docker build -t $(DOCKER_IMAGE) --target $(DOCKER_TARGET) .
+
+run:
+	docker run --rm -it $(DOCKER_IMAGE)

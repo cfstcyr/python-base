@@ -1,23 +1,37 @@
 # source: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 
 ARG PYTHON_VERSION=3.13
+ARG UV_VERSION=0.7.15
 
+ARG PROJECT_CONF_DIR=./conf
+
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
+FROM python:${PYTHON_VERSION} AS python-builder
+FROM python:${PYTHON_VERSION}-slim AS python-executor
 
 # ======== Install API dependencies using uv ========
 # https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-FROM python:${PYTHON_VERSION} AS builder
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+FROM python-builder AS builder
+COPY --from=uv /uv /uvx /bin/
 
 WORKDIR /app
 
-ENV UV_LINK_MODE=copy
+# Setup UV environment
+ENV UV_PYTHON_DOWNLOADS=manual \
+    UV_PYTHON_PREFERENCE=only-system \
+    UV_LINK_MODE=copy
+
+# Copy project files
+COPY uv.lock pyproject.toml ./
+
+# Fails if python version does not match
+RUN uv python find --no-python-downloads > /dev/null
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --no-editable --no-dev  --compile-bytecode
 
+# Copy source files
 COPY . .
 
 # Install project
@@ -26,7 +40,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 
 # ======== Build the base image ========
-FROM python:${PYTHON_VERSION}-slim AS base
+FROM python-executor AS base
+
+ARG PROJECT_CONF_DIR
 
 WORKDIR /app
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup --uid 1000 appuser
@@ -34,7 +50,7 @@ RUN addgroup --system appgroup && adduser --system --ingroup appgroup --uid 1000
 COPY --from=builder --chown=app:app \
     /app/.venv /app/.venv
 
-COPY ./conf/ /app/conf/
+COPY ${PROJECT_CONF_DIR} /app/conf/
 
 ENV LOGS_CONFIG_PATH=/app/conf/logging.prod.yaml
 ENV ENVIRONMENT=production
@@ -51,4 +67,4 @@ ENTRYPOINT ["/app/.venv/bin/app"]
 # ======= Build the API image ========
 FROM base AS api
 ENTRYPOINT ["/app/.venv/bin/uvicorn", "api:app"]
-CMD ["--host", "0.0.0.0", "--port", "8000"]
+CMD ["--host", "0.0.0.0", "--port", "8000", "--log-config", "/app/conf/logging.empty.yaml"]
