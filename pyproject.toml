@@ -13,10 +13,11 @@ dependencies = [
 
 [dependency-groups]
 api = [
-    "fastapi[standard]>=0.115.12",
+    "fastapi>=0.115.13",
     "uvicorn>=0.34.2",
 ]
 dev = [
+    "fastapi[standard]>=0.115.13",
     "pre-commit>=4.2.0",
     "pyright>=1.1.400",
     "pytest>=8.3.5",
