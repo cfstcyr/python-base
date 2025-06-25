@@ -1,4 +1,6 @@
 from enum import Enum
+from functools import lru_cache
+from typing import Self
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -32,6 +34,17 @@ class AppBaseSettings(BaseSettings):
         validation_alias=AliasChoices("environment", "env"),
         description="The environment in which the application is running.",
     )
+
+    @classmethod
+    @lru_cache
+    def create(cls) -> Self:
+        """
+        Create the settings instance.
+
+        Returns:
+            Self: An instance of the application settings.
+        """
+        return cls()
 
     def is_dev(self) -> bool:
         """

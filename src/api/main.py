@@ -2,10 +2,11 @@ import logging
 
 from fastapi import FastAPI
 
-from api.settings import get_settings
+from api.settings import Settings
 from lib_core.logs import init_logs
 
-init_logs(get_settings().logs)
+settings = Settings.create()
+init_logs(settings.logs)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
