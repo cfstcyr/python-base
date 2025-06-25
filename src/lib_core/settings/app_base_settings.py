@@ -31,7 +31,7 @@ class AppBaseSettings(BaseSettings):
 
     env: Environment = Field(
         default=Environment.DEVELOPMENT,
-        validation_alias=AliasChoices("environment", "env"),
+        validation_alias=AliasChoices("e", "env", "environment"),
         description="The environment in which the application is running.",
     )
 
