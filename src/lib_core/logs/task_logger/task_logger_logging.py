@@ -3,45 +3,25 @@ import threading
 import time
 from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, field
-from enum import Enum
+from logging import INFO, Logger
 from types import TracebackType
 from typing import Self, TypeVar
 
-import structlog
+from .types import TaskLoggerMsg, TaskLoggerUpdate
 
 T = TypeVar("T")
 
 
-class TaskLoggerUpdate(Enum):
-    INTERVAL = 0
-    """Update only at intervals (default)"""
-    UPDATE = 1
-    """Update on every call to update()"""
-    ALL = 2
-    """Update on every call to update() and at intervals"""
-
-
-@dataclass(frozen=True)
-class TaskLoggerMsg:
-    start: str = "Starting task..."
-    end: str = "Finished task in {duration}"
-    end_w_size: str = "Finished task in {duration} ({duration_per_unit}/{unit})"
-    progress: str = "Still running... (elapsed: {current}s)"
-    progress_w_current: str = (
-        "Still running... (elapsed: {current}s, processed: {current_size}{size_unit})"
-    )
-    progress_w_size_and_current: str = "Still running... (elapsed: {current}s, processed: {current_size}/{size}{size_unit})"
-
-
 @dataclass
-class TaskLogger:
+class TaskLoggerLogging:
     """
-    Logs task progress using structlog. Supports automatic and manual updates,
+    Logs task progress using Python's logging module. Supports automatic and manual updates,
     duration tracking, progress display, and error logging.
 
     Parameters:
-        logger (structlog.BoundLogger): The structlog logger to output messages to.
+        logger (Logger): The logger to output messages to.
         name (str): Name/description of the task.
+        level (int): Logging level to use (default: logging.INFO).
         size (int | None): Optional total number of items to process. Enables per-item timing and progress ratios.
         size_unit (str | tuple[str, str]): Unit for progress messages. Can be a single string (e.g. "items") or
                                            a tuple for singular/plural (e.g. ("item", "items")).
@@ -49,13 +29,15 @@ class TaskLogger:
         progress_min_interval (float): Minimum interval in seconds between logs (prevents log spam, default: 3).
         progress_update (TaskLoggerUpdate): When to emit progress logs — on interval, on update call, or both.
         msg (TaskLoggerMsg): Customizable message templates for task start, progress, and end.
+        log_template (str): Template for log entries. Use `%s` placeholders for task name and message.
         auto_start (bool): If True, the task starts immediately on instantiation.
         on_error (Callable[[BaseException], None] | None): Optional callback invoked if an exception is raised.
     """
 
     # --- Core logger config ---
-    logger: structlog.BoundLogger
+    logger: Logger
     name: str
+    level: int = INFO
 
     # --- Progress config ---
     size: int | None = None
@@ -66,6 +48,7 @@ class TaskLogger:
 
     # --- Custom messaging ---
     msg: TaskLoggerMsg = field(default_factory=TaskLoggerMsg)
+    log_template: str = "[Task: %s] %s"
 
     # --- Control flags ---
     auto_start: bool = False
@@ -88,12 +71,10 @@ class TaskLogger:
         if self.auto_start:
             self.start()
 
-        self.logger = self.logger.bind(task_name=self.name)
-
     def start(self) -> Self:
         self._running = True
         self._start = datetime.datetime.now(tz=datetime.UTC)
-        self.logger.info(self.msg.start, task_status="started")
+        self._log(self.msg.start)
 
         if self.progress_update in (TaskLoggerUpdate.INTERVAL, TaskLoggerUpdate.ALL):
             self._progress_thread = threading.Thread(
@@ -109,21 +90,16 @@ class TaskLogger:
         self._running = False
         duration = datetime.datetime.now(tz=datetime.UTC) - self._start
 
-        log = self.logger.bind(
-            duration=f"{duration.total_seconds():.0f}s",
-            task_status="stopped",
-        )
-
         if self.size and self.size > 0:
-            log.info(
-                self.msg.end_w_size.format(
-                    duration=duration,
-                    duration_per_unit=duration / self.size,
-                    unit=self._plural_unit(self.size),
-                )
+            msg = self.msg.end_w_size.format(
+                duration=duration,
+                duration_per_unit=duration / self.size,
+                unit=self._plural_unit(self.size),
             )
         else:
-            log.info(self.msg.end.format(duration=duration))
+            msg = self.msg.end.format(duration=duration)
+
+        self._log(msg)
 
     def update(self, current: int):
         if not self._running:
@@ -153,43 +129,41 @@ class TaskLogger:
             self._last_progress_time = now
             duration = datetime.datetime.now(tz=datetime.UTC) - self._start
 
-            log = self.logger.bind(
-                task_elapsed=f"{duration.total_seconds():.0f}s",
-                task_status="running",
-            )
-
-            if self._current is not None:
-                log = log.bind(
-                    task_current=self._current,
+            if self.size and self._current is not None:
+                self._log(
+                    self.msg.progress_w_size_and_current.format(
+                        current=f"{duration.total_seconds():.0f}",
+                        current_size=self._current,
+                        size=self.size,
+                        size_unit=self._plural_unit(self._current),
+                    )
                 )
-                if self.size is not None and self.size > 0:
-                    log.info(
-                        self.msg.progress_w_size_and_current.format(
-                            current=round(duration.total_seconds()),
-                            current_size=self._current,
-                            size=self.size,
-                            size_unit=self._plural_unit(self.size),
-                        ),
-                        task_total=self.size,
-                        task_progress=f"{self._current / self.size:.0%}",
+            elif self._current is not None:
+                self._log(
+                    self.msg.progress_w_current.format(
+                        current=f"{duration.total_seconds():.0f}",
+                        current_size=self._current,
+                        size_unit=self._plural_unit(self._current),
                     )
-                else:
-                    log.info(
-                        self.msg.progress_w_current.format(
-                            current=round(duration.total_seconds()),
-                            current_size=self._current,
-                            size_unit=self._plural_unit(self._current),
-                        )
-                    )
+                )
             else:
-                log.info(
-                    self.msg.progress.format(current=round(duration.total_seconds()))
+                self._log(
+                    self.msg.progress.format(current=f"{duration.total_seconds():.0f}")
                 )
 
     def _plural_unit(self, current: int) -> str:
         if isinstance(self.size_unit, tuple):
             return self.size_unit[1 if current > 1 else 0]
         return self.size_unit
+
+    def _log(self, message: str):
+        self.logger.log(
+            self.level,
+            self.log_template,
+            self.name,
+            message,
+            extra={"task_desc": self.name},
+        )
 
     def __enter__(self) -> Self:
         return self.start()
@@ -202,10 +176,7 @@ class TaskLogger:
     ):
         if exc_val is not None:
             self.logger.error(
-                "Task failed with error",
-                task_name=self.name,
-                error=str(exc_val),
-                exc_info=(exc_type, exc_val, exc_tb),  # noqa: LOG014
+                self.log_template, self.name, f"Task failed with error: {exc_val}"
             )
             if self.on_error:
                 self.on_error(exc_val)
