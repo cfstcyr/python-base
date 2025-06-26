@@ -1,19 +1,17 @@
-import logging
-
+import structlog
 from pydantic_settings import CliApp
 
 from lib_core.foo import bar
-from lib_core.logs import init_logs
+from lib_core.logs import setup_logs
 from lib_core.settings.app_base_settings import AppBaseSettings
-
-logger = logging.getLogger(__name__)
 
 
 class Settings(AppBaseSettings):
     def cli_cmd(self) -> None:
-        init_logs(self.logs)
+        setup_logs(self.logs, self)
 
-        logger.info("Starting application...")
+        log = structlog.get_logger()
+        log.info("Starting application...")
 
         bar()
 
